@@ -14,8 +14,7 @@ export function htmlToMarkdown(htmlText: string) {
   const file = remark()
     .use(rehypeParse, { emitParseErrors: true, duplicateAttribute: false })
     .use(rehypeRemark)
-    .use(remarkStringify)
-    .processSync(htmlText);
+    .use(remarkStringify);
 
   return String(file);
 }
