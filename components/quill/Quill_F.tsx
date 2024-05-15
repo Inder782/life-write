@@ -13,12 +13,7 @@ const Quill_F = () => {
     setEditorHtmlValue(content.html);
     setEditorMarkdownValue(content.markdown);
   };
-  return (
-    <Editor
-      value="Start your story from here"
-      onChange={onEditorContentChanged}
-    />
-  );
+  return <Editor value="" onChange={onEditorContentChanged} />;
 };
 
 export default Quill_F;

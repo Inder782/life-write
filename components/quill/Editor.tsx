@@ -10,6 +10,7 @@ import { markdownToHtml, htmlToMarkdown } from "./Parser";
 import "react-quill/dist/quill.snow.css";
 import "quill-emoji/dist/quill-emoji.css";
 
+import { Button } from "../ui/button";
 Quill.register("modules/emoji", Emoji);
 
 export interface EditorContentChanged {
@@ -47,10 +48,11 @@ export default function Editor(props: EditorProps) {
   };
 
   return (
-    <div className="">
+    <div className="mt-2">
       <ReactQuill
         ref={reactQuillRef}
-        placeholder=""
+        theme="bubble"
+        placeholder="Your story starts here"
         modules={{
           toolbar: {
             container: TOOLBAR_OPTIONS,
@@ -61,7 +63,7 @@ export default function Editor(props: EditorProps) {
         }}
         value={value}
         onChange={onChange}
-        className="text-2xl h-full border "
+        className="text-2xl h-full borasdder-none inverted-placeholder" // Apply border-none class to remove the border
       />
     </div>
   );
