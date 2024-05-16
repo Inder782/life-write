@@ -8,7 +8,7 @@ import Editor from "@/components/quill/Editor";
 const Create_blog = () => {
   const [open, setopen] = useState(false);
   const [title, settitle] = useState("");
-
+  const [files, setfiles] = useState();
   const title_set = (e: any) => {
     settitle(e.target.value);
   };
@@ -18,6 +18,8 @@ const Create_blog = () => {
     setEditorHtmlValue(content.html);
     setEditorMarkdownValue(content.markdown);
   };
+  const [upload, setupload] = useState(false);
+
   const handleSumbit = async () => {
     try {
       const response = await fetch("/api/create", {
@@ -37,6 +39,7 @@ const Create_blog = () => {
       console.error("Error creating blog ", error);
     }
   };
+
   return (
     <div className="p-10">
       <input
@@ -55,13 +58,24 @@ const Create_blog = () => {
         </Button>
         {open && (
           <div className="mt-2 ">
-            <Button className="mr-2" variant={"secondary"}>
-              Photo
-            </Button>
-            <Button variant={"secondary"}>Video</Button>
+            <Button onClick={() => setupload(!upload)}>Image</Button>
           </div>
         )}
       </div>
+      {upload && (
+        <div>
+          <input
+            type="file"
+            id="imageUpload"
+            name="image"
+            accept="image/*"
+            className="mt-2"
+            onChange={(e: any) => {
+              setfiles(e.target.value);
+            }}
+          />
+        </div>
+      )}
       <Editor value="" onChange={onEditorContentChanged} />
       <div className=" flex justify-center">
         <Button className="mt-20 " onClick={handleSumbit}>
