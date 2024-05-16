@@ -13,6 +13,7 @@ const Quill_F = () => {
     setEditorHtmlValue(content.html);
     setEditorMarkdownValue(content.markdown);
   };
+
   return <Editor value="" onChange={onEditorContentChanged} />;
 };
 
