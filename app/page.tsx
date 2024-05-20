@@ -10,10 +10,10 @@ const page = async () => {
   return (
     <div className="grid lg:grid-cols-4 md:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">
       {blogs?.map((item) => (
-        <div>
-        <Link href={`post/${item.id}`}>
-        <Card key={item.id} title={item.title} />
-        </Link>
+        <div key={item.id}>
+          <Link href={`post/${item.id}`}>
+            <Card key={item.id} title={item.title} />
+          </Link>
         </div>
       ))}
     </div>

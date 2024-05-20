@@ -14,7 +14,7 @@ const Navbar = () => {
       </div>
       <div className="text-white flex">
         {Links_Nav.map((item) => (
-          <Link href="/" className="p-6" key={item.id}>
+          <Link href={item.to} className="p-6" key={item.id}>
             {item.Link}
           </Link>
         ))}
