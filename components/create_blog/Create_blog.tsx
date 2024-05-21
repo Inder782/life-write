@@ -1,14 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useEffect } from "react";
 import "react-quill/dist/quill.bubble.css";
 import { useState } from "react";
 import Editor from "@/components/quill/Editor";
+import { supabase } from "@/lib/supabaseclient";
 
 const Create_blog = () => {
   const [open, setopen] = useState(false);
   const [title, settitle] = useState("");
   const [files, setfiles] = useState();
+
   const title_set = (e: any) => {
     settitle(e.target.value);
   };
@@ -40,10 +42,22 @@ const Create_blog = () => {
     }
   };
 
+  // logic to upload files to supabase s3 bucket
+  const bucket_supabase = async () => {
+    const { data, error } = await supabase.storage
+      .from("files")
+      .upload("file", files!);
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Success");
+    }
+  };
+
   return (
     <div className="p-10">
       <input
-        className="focus:outline-none bg-transparent w-2/3 p-6 text-3xl"
+        className="focus:outline-none bg-transparent w-2/3 p-6 text-3xl font-bold"
         placeholder="Title goes here"
         onChange={title_set}
       />
@@ -80,6 +94,9 @@ const Create_blog = () => {
       <div className=" flex justify-center">
         <Button className="mt-20 " onClick={handleSumbit}>
           Publish
+        </Button>
+        <Button className="mt-20 " onClick={bucket_supabase}>
+          Upload
         </Button>
       </div>
     </div>
