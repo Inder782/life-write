@@ -1,14 +1,18 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useEffect } from "react";
 import "react-quill/dist/quill.bubble.css";
 import { useState } from "react";
 import Editor from "@/components/quill/Editor";
+import { supabase } from "@/lib/supabaseclient";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Create_blog = () => {
   const [open, setopen] = useState(false);
   const [title, settitle] = useState("");
   const [files, setfiles] = useState();
+  const [filename, setfilename] = useState("");
   const title_set = (e: any) => {
     settitle(e.target.value);
   };
@@ -19,7 +23,7 @@ const Create_blog = () => {
     setEditorMarkdownValue(content.markdown);
   };
   const [upload, setupload] = useState(false);
-
+  const router = useRouter();
   const handleSumbit = async () => {
     try {
       const response = await fetch("/api/create", {
@@ -32,18 +36,35 @@ const Create_blog = () => {
           body: editorHtmlValue,
         }),
       });
-      if (!response.ok) {
-        throw new Error("Failed to create blog post");
+      if (response.ok) {
+        router.push("/");
       }
     } catch (error) {
       console.error("Error creating blog ", error);
     }
   };
 
+  useEffect(() => {
+    const upload_image = async () => {
+      console.log(filename);
+      const { data, error } = await supabase.storage
+        .from("files")
+        .upload(filename, files!);
+    };
+    const get_image_url = async () => {
+      const { data, error } = await supabase.storage
+        .from("files")
+        .createSignedUrl(filename, 60 * 60);
+      console.log(data?.signedUrl);
+    };
+    upload_image();
+    get_image_url();
+  }, [files, filename]);
+
   return (
     <div className="p-10">
       <input
-        className="focus:outline-none bg-transparent w-2/3 p-6 text-3xl"
+        className="focus:outline-none bg-transparent w-2/3 p-6 text-3xl font-bold"
         placeholder="Title goes here"
         onChange={title_set}
       />
@@ -58,7 +79,9 @@ const Create_blog = () => {
         </Button>
         {open && (
           <div className="mt-2 ">
-            <Button onClick={() => setupload(!upload)}>Image</Button>
+            <Button onClick={() => setupload(!upload)} className="rounded-full">
+              Image
+            </Button>
           </div>
         )}
       </div>
@@ -72,6 +95,8 @@ const Create_blog = () => {
             className="mt-2"
             onChange={(e: any) => {
               setfiles(e.target.value);
+              const filename = e.target.files[0].name;
+              setfilename(filename);
             }}
           />
         </div>
