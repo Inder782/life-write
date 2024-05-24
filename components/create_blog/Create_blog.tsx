@@ -11,8 +11,10 @@ import Image from "next/image";
 const Create_blog = () => {
   const [open, setopen] = useState(false);
   const [title, settitle] = useState("");
-  const [files, setfiles] = useState();
+  const [files, setfiles] = useState<File | null>();
   const [filename, setfilename] = useState("");
+  const [imageurl, setimageurl] = useState("");
+
   const title_set = (e: any) => {
     settitle(e.target.value);
   };
@@ -24,6 +26,15 @@ const Create_blog = () => {
   };
   const [upload, setupload] = useState(false);
   const router = useRouter();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedfile = e.target.files?.[0];
+
+    if (selectedfile) {
+      setfiles(selectedfile);
+      setfilename(selectedfile.name);
+    }
+  };
   const handleSumbit = async () => {
     try {
       const response = await fetch("/api/create", {
@@ -34,6 +45,7 @@ const Create_blog = () => {
         body: JSON.stringify({
           title: title,
           body: editorHtmlValue,
+          image: imageurl,
         }),
       });
       if (response.ok) {
@@ -43,22 +55,26 @@ const Create_blog = () => {
       console.error("Error creating blog ", error);
     }
   };
+  const upload_file = async () => {
+    const { data, error } = await supabase.storage
+      .from("files")
+      .upload(filename, files!);
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("File uploaded successfully");
+    }
+  };
+
+  const get_image_url = async (filename: string) => {
+    const { data } = supabase.storage.from("files").getPublicUrl(filename);
+    setimageurl(data.publicUrl);
+  };
 
   useEffect(() => {
-    const upload_image = async () => {
-      console.log(filename);
-      const { data, error } = await supabase.storage
-        .from("files")
-        .upload(filename, files!);
-    };
-    const get_image_url = async () => {
-      const { data, error } = await supabase.storage
-        .from("files")
-        .createSignedUrl(filename, 60 * 60);
-      console.log(data?.signedUrl);
-    };
-    upload_image();
-    get_image_url();
+    if (!files || !filename) return;
+    upload_file();
+    get_image_url(filename);
   }, [files, filename]);
 
   return (
@@ -93,17 +109,14 @@ const Create_blog = () => {
             name="image"
             accept="image/*"
             className="mt-2"
-            onChange={(e: any) => {
-              setfiles(e.target.value);
-              const filename = e.target.files[0].name;
-              setfilename(filename);
-            }}
+            onChange={handleFileChange}
           />
         </div>
       )}
+      {imageurl && <Image src={imageurl} width={500} height={500} alt="pic" />}
       <Editor value="" onChange={onEditorContentChanged} />
       <div className=" flex justify-center">
-        <Button className="mt-20 " onClick={handleSumbit}>
+        <Button className="mt-20" onClick={handleSumbit}>
           Publish
         </Button>
       </div>
