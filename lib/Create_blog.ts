@@ -3,12 +3,13 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function Create(title: string, body: any) {
+export async function Create(title: string, body: any, image: string) {
   try {
     const blog = await prisma.blog.create({
       data: {
         title: title,
         body: body,
+        image: image,
       },
     });
   } catch (error) {

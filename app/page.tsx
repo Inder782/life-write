@@ -12,7 +12,7 @@ const page = async () => {
       {blogs?.map((item) => (
         <div key={item.id}>
           <Link href={`post/${item.id}`}>
-            <Card key={item.id} title={item.title} />
+            <Card key={item.id} title={item.title} image={item.image} />
           </Link>
         </div>
       ))}
