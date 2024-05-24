@@ -1,5 +1,4 @@
 import { Create } from "@/lib/Create_blog";
-import console from "console";
 
 import { NextResponse } from "next/server";
 
