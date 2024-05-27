@@ -1,8 +1,8 @@
 export const Links_Nav = [
   {
     id: "1",
-    Link: "Signup",
-    to: "/home",
+    Link: "Login",
+    to: "/admin",
   },
   {
     id: "2",
