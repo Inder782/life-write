@@ -1,12 +1,13 @@
 import { Card } from "@/components/Card";
 import { Blogs } from "@/lib/Blogs";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import React from "react";
 
 // for now static will make dynamic once backend work is done
 const page = async () => {
   const blogs = await Blogs();
-
+  revalidatePath("/");
   return (
     <div className="grid lg:grid-cols-4 md:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">
       {blogs?.map((item) => (

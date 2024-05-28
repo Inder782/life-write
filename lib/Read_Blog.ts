@@ -15,6 +15,7 @@ export async function Blog_Content(id: number) {
       return blogs;
     } else {
       console.log("error while fetching");
+      return null;
     }
   } catch (error) {
     console.error("Error while fetching blogs", error);

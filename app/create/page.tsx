@@ -1,6 +1,5 @@
 import Create_blog from "@/components/create_blog/Create_blog";
 import { getSession } from "@/lib";
-import console from "console";
 import React from "react";
 
 const page = async () => {
