@@ -9,7 +9,7 @@ const page = async () => {
   const blogs = await Blogs();
   revalidatePath("/");
   return (
-    <div className="grid lg:grid-cols-4 md:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">
+    <div className="grid grid-cols-4 max-[1300px]:grid-cols-3 max-[1000px]:grid-cols-2 max-[650px]:grid-cols-1">
       {blogs?.map((item) => (
         <div key={item.id}>
           <Link href={`post/${item.id}`}>
