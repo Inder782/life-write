@@ -2,37 +2,47 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { LoginParams } from "./types";
+import { PrismaClient } from "@prisma/client";
 
 const secretKey = "secret";
 const key = new TextEncoder().encode(secretKey);
 
+const prisma = new PrismaClient();
+
 export async function encrypt(payload: any) {
+  const expirationTime = Math.floor(Date.now() / 1000) + 3600;
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("10 sec from now")
+    .setExpirationTime(expirationTime)
     .sign(key);
 }
 
 export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
+  console.log("1", input);
+
+  const { payload } = await jwtVerify(input, key, { algorithms: ["HS256"] });
   return payload;
 }
 
-export async function login(formData: FormData) {
+export async function login({ user, pwd }: LoginParams) {
   // fetch the user details from the database
   // verify them , based on that
+  const users = await prisma.admin.findUnique({
+    where: {
+      username: user,
+      password: pwd,
+    },
+  });
 
-  const user = { email: formData.get("email"), name: "John" };
-
-  // Create the session
-  const expires = new Date(Date.now() + 10 * 1000);
-  const session = await encrypt({ user, expires });
-
-  // Save the session in a cookie
-  cookies().set("session", session, { expires, httpOnly: true });
+  if (users) {
+    const expires = new Date(Date.now() + 10 * 1000);
+    const session = await encrypt({ user });
+    cookies().set("session", session);
+  } else {
+    return { message: "Invalid ", status: 401 };
+  }
 }
 
 export async function logout() {

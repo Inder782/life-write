@@ -1,5 +1,5 @@
 "use client";
-import { getSession } from "@/lib";
+import { getSession, login } from "@/lib";
 import React, { useState } from "react";
 
 const Page = () => {
@@ -13,30 +13,19 @@ const Page = () => {
   const handle_pwd = (e: React.ChangeEvent<HTMLInputElement>) => {
     setpwd(e.target.value);
   };
-  const submit = async () => {
-    const session = await getSession();
-    console.log(session);
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const auth = await login({ user, pwd });
+    const status = auth?.status;
+    if (status === 200) {
+      console.log("yes its the user");
+    } else if (status === 401) {
+      // here i can return a pop over for un auth
+      console.log("Un auth");
+    }
   };
 
-  // const signin = async () => {
-  //   try {
-  //     const data = await fetch("/api/login", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         user: user,
-  //         password: pwd,
-  //       }),
-  //     });
-  //     if (data.status == 200) {
-  //       return <div>User created</div>;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating user", error);
-  //   }
-  // };
   return (
     <div
       className="flex  items-center bg-cover min-h-screen justify-center"
