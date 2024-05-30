@@ -19,7 +19,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
         alt="thumbnail"
         className="mt-2"
       />
-      <div dangerouslySetInnerHTML={{ __html: data!.body }} className="p-10" />
+      <div
+        dangerouslySetInnerHTML={{ __html: data!.body }}
+        className="p-10 dark:invert"
+      />
     </div>
   );
 }
